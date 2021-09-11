@@ -1,72 +1,40 @@
 import React, { useState } from "react";
 import "./App.css";
-import Recipes from "./components/Recipes";
-import Pagination from "./components/Pagination";
-import useFetch from "./components/useFetch";
-// import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import "font-awesome/css/font-awesome.css";
+import Home from "./components/home.js";
+import Bookmark from "./components/Bookmark";
+import Navbar from "./components/nav.js";
 const App = () => {
-  const APP_ID = "44b9925e";
-  const APP_KEY = "0da2e3b050d6ebe7873235cc6651d6ed";
-  const [search, setSearch] = useState("");
-  const [query, setQeury] = useState("random");
-  const url = `https://api.edamam.com/api/recipes/v2/?type=public&q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`;
+  const [liked, setLiked] = useState(() => []);
 
-  const { loading, error, recipes, next } = useFetch(url);
-
-  const onSearchText = (event) => {
-    setSearch(event.target.value);
+  const handleLike = (recipe, liked) => {
+    const likedArr = [...liked];
+    if (!likedArr.includes(recipe)) {
+      setLiked((prevState) => [recipe, ...prevState]);
+    }
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setQeury(search);
-    setSearch("");
+  const handleDelete = (id) => {
+    setLiked(liked.filter((item) => item.uri !== id));
   };
-
   return (
-    <div className="App">
-      <h1 translate="false">Recipea</h1>
-      <form className="input-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          className="input"
-          placeholder="Search you recipes here"
-          value={search}
-          onChange={onSearchText}
-          autoComplete="true"
-        />
-        <button type="submit" className="submit-btn">
-          Search
-        </button>
-      </form>
-      <div>
-        {loading && (
-          <p className="p-text">Loading Recipes..., Please wait!!!</p>
-        )}
+    <Router>
+      <div className="App">
+        <Navbar />
+        <Switch>
+          <Route path="/" exact>
+            <Home liked={liked} handleLike={handleLike} />
+          </Route>
+          <Route path="/bookmark">
+            <Bookmark recipes={liked} handleDelete={handleDelete} />
+          </Route>
+          <Route path="/*">
+            <h2>Page not found</h2>
+          </Route>
+        </Switch>
       </div>
-      <div>{error && <p className="p-text">{error}</p>}</div>
-      <div>
-        {error && recipes.length <= 0 && (
-          <p className="p-text">
-            There are no recipes for <span>{query}</span> ...
-          </p>
-        )}
-      </div>
-      <div className="recipes">
-        {recipes.map((recipe) => (
-          <div className="recipe" key={recipe.recipe.uri}>
-            <Recipes
-              title={recipe.recipe.label}
-              image={recipe.recipe.image}
-              calories={recipe.recipe.calories}
-              url={recipe.recipe.url}
-            />
-          </div>
-        ))}
-      </div>
-      <Pagination next={next.href} link={url} />
-    </div>
+    </Router>
   );
 };
 

@@ -6,12 +6,6 @@
   margin: 0 auto;
 }
 
-.App h1 {
-  /* float: left; */
-  margin: 0px 0px 10px 30px;
-  color: rgb(184, 28, 54);
-  font-size: 40px;
-}
 .p-text {
   font-size: 20px;
   font-weight: bolder;
@@ -21,9 +15,9 @@
   color: rgb(184, 28, 54);
 }
 
-.App p span {
+/* .App p span {
   text-decoration: underline;
-}
+} */
 .input-form {
   min-width: 55%;
   min-height: 10vh;
@@ -85,9 +79,21 @@
   font-style: italic;
 }
 
+.recipe-like-btn {
+  margin: 8px 0px;
+  padding: 6px 15px;
+  background-color: rgb(184, 28, 54);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+}
+
 @media screen and (max-width: 768px) {
   .recipe {
     flex-basis: 40%;
+  }
+  .input[type="text"] {
+    margin-bottom: 20px;
   }
 }
 

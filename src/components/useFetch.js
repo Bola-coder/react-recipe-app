@@ -7,31 +7,36 @@ const useFetch = (url) => {
   const [next, setNext] = useState("");
 
   useEffect(() => {
+    let isMounted = true;
     fetch(url)
       .then((res) => {
+        setLoading(true);
         return res.json();
       })
       .then((data) => {
-        // console.log(data);
-        setRecipes(data.hits);
-        setNext(data._links.next);
-        setLoading(false);
-        setError(false);
+        if (isMounted) {
+          setRecipes(data.hits);
+          setNext(data._links.next);
+          setLoading(false);
+          setError(false);
+        }
       })
       .catch((error) => {
-        // console.log(error.name);
         if (error) {
           setLoading(false);
           setError(true);
           if (error.name === "TypeError") {
             setError(
-              "OOPS!!! There is an error fetching the Recipes, Please try refreshing the browser!!!"
+              "OOPS!!! There is an error fetching the Recipes, Please check your internet connection or try refreshing the browser!!!"
             );
           } else {
             setError(error.message);
           }
         }
       });
+    return () => {
+      isMounted = false;
+    };
   }, [url]);
 
   return { loading, error, recipes, next };
